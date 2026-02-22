@@ -1,1 +1,50 @@
 @import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom Colors */
+:root {
+  --primary-pink: #FF6EC7;
+  --primary-purple: #7B5FFF;
+  --background-white: #FFFFFF;
+  --text-dark: #1F1F1F;
+}
+
+/* Body styling */
+body {
+  background-color: var(--background-white);
+  color: var(--text-dark);
+  font-family: 'Inter', sans-serif;
+}
+
+/* Buttons */
+.btn {
+  @apply px-4 py-2 rounded font-semibold transition duration-300;
+}
+.btn-primary {
+  @apply bg-gradient-to-r from-[#FF6EC7] to-[#7B5FFF] text-white hover:opacity-90;
+}
+.btn-secondary {
+  @apply bg-white text-[#7B5FFF] border border-[#7B5FFF] hover:bg-[#7B5FFF] hover:text-white;
+}
+
+/* Input styling */
+.input {
+  @apply border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-400;
+}
+
+/* Cards */
+.card {
+  @apply border border-gray-200 rounded-lg shadow hover:shadow-lg transition p-4 bg-white;
+}
+
+/* Navbar */
+.navbar {
+  @apply flex items-center justify-between p-4 bg-gradient-to-r from-[#FF6EC7] to-[#7B5FFF] text-white shadow;
+}
+
+/* Links */
+a {
+  @apply hover:underline;
+}
