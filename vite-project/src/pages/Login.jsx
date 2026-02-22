@@ -1,4 +1,3 @@
-// src/pages/Login.jsx
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 
@@ -9,7 +8,6 @@ export default function Login() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Temporary test login
     if (username === "testuser" && password === "password") {
       navigate("/dashboard");
     } else {
@@ -18,40 +16,48 @@ export default function Login() {
   };
 
   return (
-    <div className="bg-gradient-to-br from-[#FF6EC7] via-white to-[#7B5FFF] min-h-screen flex items-center justify-center">
-      <form
-        onSubmit={handleSubmit}
-        className="flex flex-col gap-4 max-w-sm w-full p-8 bg-white rounded-xl shadow-lg"
-      >
-        <h1 className="text-3xl font-bold text-center text-[#7B5FFF] mb-4">AniLibrary Login</h1>
-
-        <input
-          className="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-400"
-          placeholder="Username"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-        />
-
-        <input
-          className="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-400"
-          placeholder="Password"
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-
-        <button className="px-4 py-2 rounded font-semibold bg-gradient-to-r from-[#FF6EC7] to-[#7B5FFF] text-white hover:opacity-90 transition duration-300">
-          Login
-        </button>
-
-        <p className="text-center text-gray-600 mt-2">
-          No account? <Link to="/register" className="text-[#FF6EC7] font-semibold">Register</Link>
-        </p>
-
-        <p className="text-center text-gray-500 mt-2 text-sm">
-          Temporary test login: <b>testuser / password</b>
-        </p>
-      </form>
+    <div className="bg-[#121212] min-h-screen flex flex-col items-center pt-20 font-sans">
+      {/* Fake Logo */}
+      <h1 className="text-white text-4xl font-bold mb-8 tracking-tighter">
+        MyAnimeList<span className="text-[#729bce] text-sm ml-1">Clone</span>
+      </h1>
+      
+      <div className="bg-[#1e1e1e] border border-[#2a2a2a] w-full max-w-sm p-6 rounded-sm shadow-lg">
+        <h2 className="text-white font-bold text-lg mb-4 border-b border-[#2a2a2a] pb-2">Log In</h2>
+        
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+          <div>
+            <label className="block text-xs font-bold text-gray-400 mb-1">Username</label>
+            <input
+              className="w-full bg-[#121212] border border-[#333] text-white rounded-sm px-2 py-1.5 focus:outline-none focus:border-[#2E51A2] text-sm"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+            />
+          </div>
+          
+          <div>
+            <label className="block text-xs font-bold text-gray-400 mb-1">Password</label>
+            <input
+              type="password"
+              className="w-full bg-[#121212] border border-[#333] text-white rounded-sm px-2 py-1.5 focus:outline-none focus:border-[#2E51A2] text-sm"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+          </div>
+          
+          <button className="bg-[#2E51A2] text-white font-bold py-2 rounded-sm mt-2 hover:bg-[#3b63bf] text-sm transition-colors">
+            Login
+          </button>
+          
+          <p className="text-center text-xs text-gray-400 mt-2">
+            No account? <Link to="/register" className="text-[#729bce] hover:underline">Sign Up</Link>
+          </p>
+          
+          <p className="text-center text-xs text-gray-600 mt-2 border-t border-[#2a2a2a] pt-3">
+            Temporary test login: <b className="text-gray-400">testuser / password</b>
+          </p>
+        </form>
+      </div>
     </div>
   );
 }

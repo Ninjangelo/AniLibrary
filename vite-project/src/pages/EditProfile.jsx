@@ -4,32 +4,43 @@ import Navbar from "../components/Navbar";
 
 export default function EditProfile() {
   return (
-    <div className="bg-gradient-to-br from-[#FF6EC7] via-white to-[#7B5FFF] min-h-screen transition-all duration-500 ease-in-out">
+    <div className="min-h-screen bg-[#121212] pb-10">
       <Navbar />
-      <div className="p-6 max-w-2xl mx-auto bg-white rounded-xl shadow-lg mt-6">
-        <h1 className="text-3xl font-bold text-[#7B5FFF] mb-4">Edit Profile</h1>
-        <form className="flex flex-col gap-4">
-          <input
-            className="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-400"
-            placeholder="Username"
-            defaultValue="User123"
-          />
-          <input
-            className="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-400"
-            placeholder="Email"
-            type="email"
-            defaultValue="user@example.com"
-          />
-          <button className="px-6 py-3 rounded font-semibold bg-gradient-to-r from-[#FF6EC7] to-[#7B5FFF] text-white hover:opacity-90 transition duration-300">
-            Save Changes
-          </button>
-        </form>
-        <Link
-          to="/profile"
-          className="mt-4 inline-block text-[#FF6EC7] font-semibold hover:underline"
-        >
-          Back to Profile
-        </Link>
+      <div className="max-w-[1060px] mx-auto mt-4 text-sm">
+        
+        <div className="border-b border-gray-600 mb-4 pb-1">
+          <h1 className="text-white text-xl font-bold">Profile Settings</h1>
+        </div>
+
+        <div className="bg-[#1e1e1e] border border-[#2a2a2a] max-w-2xl p-6 rounded-sm">
+          <form className="flex flex-col gap-5">
+            <div>
+              <label className="block text-xs font-bold text-gray-400 mb-1">Username</label>
+              <input
+                className="w-full bg-[#121212] border border-[#333] text-white rounded-sm px-3 py-2 focus:outline-none focus:border-[#2E51A2]"
+                defaultValue="TestUser"
+              />
+            </div>
+            
+            <div>
+              <label className="block text-xs font-bold text-gray-400 mb-1">Email</label>
+              <input
+                className="w-full bg-[#121212] border border-[#333] text-white rounded-sm px-3 py-2 focus:outline-none focus:border-[#2E51A2]"
+                type="email"
+                defaultValue="user@example.com"
+              />
+            </div>
+            
+            <div className="pt-2 border-t border-[#2a2a2a] flex justify-between items-center">
+              <Link to="/profile" className="text-[#729bce] text-xs hover:underline">
+                ← Back to Profile
+              </Link>
+              <button className="bg-[#2E51A2] text-white font-bold py-2 px-6 rounded-sm hover:bg-[#3b63bf] transition-colors">
+                Save Changes
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
   );
