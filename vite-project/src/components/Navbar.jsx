@@ -7,7 +7,7 @@ export default function Navbar() {
       {/* Top Bar (Black) */}
       <div className="bg-black text-white h-12 flex items-center justify-between px-4">
         <Link to="/dashboard" className="text-2xl font-bold font-sans tracking-tighter">
-          MyAnimeList<span className="text-gray-400 text-xs ml-2 font-normal">AniLibrary Clone</span>
+          AniLibrary<span className="text-gray-400 text-xs ml-2 font-normal">nerd spot</span>
         </Link>
         <div className="flex items-center gap-4 text-sm font-semibold">
           <span className="text-gray-400 cursor-pointer hover:text-white">Hide Ads</span>
