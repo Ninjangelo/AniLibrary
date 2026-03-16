@@ -7,65 +7,125 @@ export default function AnimeDetails({ addToMyList }) {
   const { id } = useParams();
   const anime = animeList.find((a) => a.id === parseInt(id));
 
-  if (!anime) return <div className="text-white bg-[#121212] min-h-screen p-6">Anime not found</div>;
+  if (!anime) {
+    return (
+      <div className="min-h-screen bg-[#121212] text-white flex items-center justify-center">
+        Anime not found
+      </div>
+    );
+  }
 
   return (
-    <div className="min-h-screen bg-[#121212] pb-10">
+    <div className="min-h-screen bg-[#121212] pb-12">
       <Navbar />
-      <div className="max-w-[1060px] mx-auto mt-4 text-sm">
-        
-        {/* Title Header */}
-        <div className="border-b border-gray-600 mb-4 pb-1">
-          <h1 className="text-white text-xl font-bold">{anime.title}</h1>
-        </div>
-        
-        <div className="flex gap-4">
-          {/* Left Sidebar (Image & Info) */}
-          <div className="w-[225px] flex-shrink-0">
-            <img 
-              src={`https://via.placeholder.com/225x318?text=${anime.title}`} 
-              alt={anime.title} 
-              className="w-full border border-gray-700 mb-2 object-cover"
-            />
-            
-            <button 
-              onClick={() => addToMyList(anime)}
-              className="w-full bg-[#2E51A2] hover:bg-[#3b63bf] text-white py-1.5 rounded text-xs font-bold mb-4 shadow-sm"
-            >
-              Add to My List
-            </button>
 
-            <h2 className="text-white font-bold border-b border-[#2a2a2a] pb-1 mb-2">Information</h2>
-            <ul className="text-xs space-y-1 text-gray-400">
-              <li><span className="text-white font-bold">Type:</span> TV</li>
-              <li><span className="text-white font-bold">Episodes:</span> {anime.episodes}</li>
-              <li><span className="text-white font-bold">Status:</span> Finished Airing</li>
-              <li><span className="text-white font-bold">Genres:</span> <span className="text-[#729bce] cursor-pointer hover:underline">{anime.genre}</span></li>
-            </ul>
+      <div className="max-w-6xl mx-auto mt-8 px-4">
+
+        {/* Title */}
+        <div className="mb-6">
+          <h1
+            className="text-3xl text-white"
+            style={{ fontFamily: "Montserrat, sans-serif", fontWeight: 800 }}
+          >
+            {anime.title}
+          </h1>
+        </div>
+
+        <div className="flex flex-col md:flex-row gap-8">
+
+          {/* Left Column */}
+          <div className="w-full md:w-[260px]">
+
+            <div className="bg-[#1e1e1e] border border-[#2a2a2a] rounded-md p-4">
+              
+              {/* Image Placeholder */}
+              <div className="w-full h-[320px] bg-[#2a2a2a] flex items-center justify-center text-gray-500 mb-4">
+                IMG
+              </div>
+
+              {/* Add Button */}
+              <button
+                onClick={() => addToMyList(anime)}
+                className="w-full bg-[#9c16c2] hover:bg-[#7c11a0] text-white py-2 rounded-md font-semibold transition"
+              >
+                Add to My List
+              </button>
+
+              {/* Info */}
+              <div className="mt-6">
+                <h2 className="text-white font-bold mb-3 text-sm uppercase tracking-wide">
+                  Information
+                </h2>
+
+                <ul className="text-sm text-gray-400 space-y-2">
+                  <li>
+                    <span className="text-white font-semibold">Type:</span> TV
+                  </li>
+                  <li>
+                    <span className="text-white font-semibold">Episodes:</span>{" "}
+                    {anime.episodes}
+                  </li>
+                  <li>
+                    <span className="text-white font-semibold">Status:</span>{" "}
+                    Finished Airing
+                  </li>
+                  <li>
+                    <span className="text-white font-semibold">Genres:</span>{" "}
+                    {anime.genre}
+                  </li>
+                </ul>
+              </div>
+
+            </div>
           </div>
 
-          {/* Right Content (Stats & Synopsis) */}
+          {/* Right Column */}
           <div className="flex-1">
-            {/* Score / Rank Header */}
-            <div className="bg-[#1e1e1e] border border-[#2a2a2a] flex items-center p-3 mb-4 rounded">
-              <div className="text-center px-4 border-r border-[#2a2a2a]">
-                <div className="bg-[#2E51A2] text-white text-[10px] font-bold px-2 py-0.5 rounded mb-1 uppercase tracking-wider">Score</div>
-                <div className="text-white text-2xl font-bold">8.50</div>
-                <div className="text-[10px] text-gray-500">123,456 users</div>
-              </div>
-              <div className="flex gap-6 px-6 text-xs text-gray-400">
-                <div>Ranked <strong className="text-white text-sm">#15</strong></div>
-                <div>Popularity <strong className="text-white text-sm">#5</strong></div>
-                <div>Members <strong className="text-white text-sm">1,500,000</strong></div>
+
+            {/* Stats Card */}
+            <div className="bg-[#1e1e1e] border border-[#2a2a2a] rounded-md p-6 mb-6">
+
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
+
+                <div>
+                  <p className="text-xs uppercase text-gray-400 mb-1">
+                    Score
+                  </p>
+                  <p className="text-3xl font-bold text-white">8.50</p>
+                  <p className="text-xs text-gray-500">
+                    123,456 users
+                  </p>
+                </div>
+
+                <div className="flex gap-8 text-sm text-gray-400">
+                  <div>
+                    Ranked <span className="text-white font-semibold">#15</span>
+                  </div>
+                  <div>
+                    Popularity <span className="text-white font-semibold">#5</span>
+                  </div>
+                  <div>
+                    Members{" "}
+                    <span className="text-white font-semibold">
+                      1,500,000
+                    </span>
+                  </div>
+                </div>
+
               </div>
             </div>
 
-            <h2 className="text-white font-bold border-b border-[#2a2a2a] pb-1 mb-2">Synopsis</h2>
-            <p className="text-xs text-gray-300 leading-relaxed mb-4">
-              {anime.description}
-              <br/><br/>
-              [Written by MAL Rewrite]
-            </p>
+            {/* Synopsis */}
+            <div className="bg-[#1e1e1e] border border-[#2a2a2a] rounded-md p-6">
+              <h2 className="text-white font-bold mb-4 text-sm uppercase tracking-wide">
+                Synopsis
+              </h2>
+
+              <p className="text-gray-300 leading-relaxed text-sm">
+                {anime.description}
+              </p>
+            </div>
+
           </div>
         </div>
       </div>

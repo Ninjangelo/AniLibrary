@@ -3,34 +3,113 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --mal-blue: #2E51A2;
-  --mal-dark-bg: #121212;
-  --mal-dark-panel: #1e1e1e;
-  --mal-text-light: #ababab;
-  --mal-link-blue: #729bce;
-}
+/* =========================
+   GLOBAL BASE
+========================= */
 
 body {
-  background-color: var(--mal-dark-bg);
-  color: var(--mal-text-light);
-  font-family: 'Verdana', 'Arial', sans-serif; /* MAL uses very standard web-safe fonts */
-  font-size: 13px; /* Classic dense text size */
+  background-color: #121212;
+  color: #ffffff; /* ✅ All default text white */
+  font-family: 'Verdana', 'Arial', sans-serif;
+  font-size: 13px;
+  margin: 0;
+  padding: 0;
 }
 
-/* Base overrides for links in dark mode */
+/* =========================
+   TITLE FONT (Montserrat)
+========================= */
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
+
+/* =========================
+   REMOVE ALL BLUE LINKS
+========================= */
+
 a {
-  color: var(--mal-link-blue);
-  cursor: pointer;
-}
-a:hover {
-  text-decoration: underline;
+  color: #ffffff !important; /* ✅ No more blue links */
+  text-decoration: none;
+  transition: 0.2s ease;
 }
 
-/* Table borders for MAL look */
-.mal-table th, .mal-table td {
-  border-bottom: 1px solid #2a2a2a;
+a:hover {
+  opacity: 0.85;
+  text-decoration: none;
 }
-.mal-list-table th, .mal-list-table td {
-  border-bottom: 1px solid #e5e7eb;
+
+/* =========================
+   TABLE STYLING
+========================= */
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+th,
+td {
+  border-bottom: 1px solid #2a2a2a;
+  padding: 8px;
+  color: #ffffff;
+}
+
+/* =========================
+   DARK PANEL STYLE
+========================= */
+
+.panel {
+  background-color: #1e1e1e;
+  border: 1px solid #2a2a2a;
+  border-radius: 6px;
+  padding: 1rem;
+}
+
+/* =========================
+   PRIMARY BUTTON STYLE
+========================= */
+
+.btn-primary {
+  background-color: #9c16c2;
+  color: white;
+  padding: 6px 14px;
+  border-radius: 4px;
+  font-weight: bold;
+  transition: 0.2s ease;
+}
+
+.btn-primary:hover {
+  background-color: #7c11a0;
+}
+
+/* =========================
+   PURPLE BACKGROUND HELPER
+========================= */
+
+.bg-primary {
+  background-color: #9c16c2;
+}
+
+.text-primary {
+  color: #9c16c2;
+}
+
+/* =========================
+   SCROLLBAR (Optional)
+========================= */
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #333;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #444;
 }
