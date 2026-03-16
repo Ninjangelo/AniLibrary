@@ -1,6 +1,13 @@
 import React from "react";
 import Navbar from "../components/Navbar";
 
+import bannerImg from "../assets/images/banner.png";
+import promo1Img from "../assets/images/promo1.png";
+import promo2Img from "../assets/images/promo2.png";
+import promo3Img from "../assets/images/promo3.png";
+
+const PLACEHOLDER = "https://via.placeholder.com/300x112";
+
 export default function Dashboard() {
   return (
     <div className="min-h-screen bg-[#121212] pb-10">
@@ -8,9 +15,14 @@ export default function Dashboard() {
 
       <div className="max-w-[1060px] mx-auto mt-4 text-sm">
 
-        {/* Ad Banner Placeholder */}
-        <div className="w-full h-32 bg-[#1e1e1e] border border-[#2a2a2a] flex items-center justify-center mb-4 text-gray-500 rounded">
-          [ Ad Banner Placeholder ]
+        {/* Ad Banner */}
+        <div className="w-full h-32 mb-4 rounded overflow-hidden border border-[#2a2a2a]">
+          <img
+            src={bannerImg}
+            alt="Ad Banner"
+            className="w-full h-full object-cover"
+            onError={(e) => { e.target.src = PLACEHOLDER; }}
+          />
         </div>
 
         {/* Panel Header */}
@@ -33,16 +45,21 @@ export default function Dashboard() {
                 </span>
               </div>
 
+              {/* Promo Grid */}
               <div className="grid grid-cols-3 gap-2">
-                <div className="bg-[#1e1e1e] border border-[#2a2a2a] h-28 text-center flex items-center justify-center p-2 rounded">
-                  Promo 1
-                </div>
-                <div className="bg-[#1e1e1e] border border-[#2a2a2a] h-28 text-center flex items-center justify-center p-2 rounded">
-                  Promo 2
-                </div>
-                <div className="bg-[#1e1e1e] border border-[#2a2a2a] h-28 text-center flex items-center justify-center p-2 rounded">
-                  Promo 3
-                </div>
+                {[promo1Img, promo2Img, promo3Img].map((img, i) => (
+                  <div
+                    key={i}
+                    className="bg-[#1e1e1e] border border-[#2a2a2a] h-28 rounded overflow-hidden"
+                  >
+                    <img
+                      src={img}
+                      alt={`Promo ${i + 1}`}
+                      className="w-full h-full object-cover"
+                      onError={(e) => { e.target.src = PLACEHOLDER; }}
+                    />
+                  </div>
+                ))}
               </div>
             </div>
 
