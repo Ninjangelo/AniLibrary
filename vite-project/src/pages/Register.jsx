@@ -1,15 +1,68 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 
+const getCookie = (name) => {
+  const match = document.cookie.match(new RegExp('(^|;\\s*)(' + name + ')=([^;]*)'));
+  return match ? decodeURIComponent(match[3]) : null;
+}
+
 export default function Register() {
   const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [passwordConfirmation, setPasswordConfirmation] = useState("");
+  const [errorMsg, setErrorMsg] = useState("");
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    alert(`Account created for ${username}!\nUse testuser / password to login`);
-    navigate("/");
+    setErrorMsg("");
+
+    try {
+      console.log("Checkpoint 1: Requesting cookie...");
+      await fetch('http://localhost:8000/sanctum/csrf-cookie', {
+        method: 'GET',
+        headers: { 'Accept': 'application/json' },
+        credentials: 'include', 
+      });
+
+      console.log("Checkpoint 2: Cookie requested. Grabbing token...");
+      const csrfToken = getCookie('XSRF-TOKEN');
+      console.log("The token is:", csrfToken);
+
+      console.log("Checkpoint 3: Sending registration data...");
+      const response = await fetch('http://localhost:8000/register', {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          'X-XSRF-TOKEN': csrfToken, 
+        },
+        credentials: 'include',
+        body: JSON.stringify({
+          name: username,
+          email: email,
+          password: password,
+          password_confirmation: passwordConfirmation
+        })
+      });
+
+      console.log("Checkpoint 4: Laravel responded! Status:", response.status);
+
+      if (!response.ok || response.status === 204) {
+        console.log("Account created successfully!");
+        navigate("/dashboard");
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Registration failed. Please check your inputs.");
+      }
+
+      const errorData = await response.json();
+      throw new Error(errorData.message || "Registration failed. Please check inputs.");
+
+    } catch (error) {
+      console.error("CRASH DETECTED:", error);
+      setErrorMsg(error.message);
+    }
   };
 
   return (
@@ -33,12 +86,23 @@ export default function Register() {
 
           <div>
             <label className="block text-xs font-bold text-gray-400 mb-1">
-              Desired Username
+              Username
             </label>
             <input
               className="w-full bg-[#121212] border border-[#333] text-white rounded-sm px-2 py-1.5 focus:outline-none focus:border-[#9c16c2] transition text-sm"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
+            />
+          </div>
+
+          <div>
+            <label className="block text-xs font-bold text-gray-400 mb-1">Email Address</label>
+            <input
+              type="email"
+              required
+              className="w-full bg-[#121212] border border-[#333] text-white rounded-sm px-2 py-1.5 focus:outline-none focus:border-[#9c16c2] transition text-sm"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
             />
           </div>
 
@@ -51,6 +115,17 @@ export default function Register() {
               className="w-full bg-[#121212] border border-[#333] text-white rounded-sm px-2 py-1.5 focus:outline-none focus:border-[#9c16c2] transition text-sm"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+            />
+          </div>
+
+          <div>
+            <label className="block text-xs font-bold text-gray-400 mb-1">Confirm Password</label>
+            <input
+              type="password"
+              required
+              className="w-full bg-[#121212] border border-[#333] text-white rounded-sm px-2 py-1.5 focus:outline-none focus:border-[#9c16c2] transition text-sm"
+              value={passwordConfirmation}
+              onChange={(e) => setPasswordConfirmation(e.target.value)}
             />
           </div>
 

@@ -1,17 +1,55 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 
+const getCookie = (name) => {
+  const match = document.cookie.match(new RegExp('(^|;\\s*)(' + name + ')=([^;]*)'));
+  return match ? decodeURIComponent(match[3]) : null;
+};
+
 export default function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [errorMsg, setErrorMsg] = useState("");
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (username === "testuser" && password === "password") {
+    setErrorMsg("");
+
+    try {
+      await fetch('http://localhost:8000/sanctum/csrf-cookie', {
+        method: 'GET',
+        headers: { 'Accept': 'application/json' },
+        credentials: 'include',
+      });
+
+      const csrfToken = getCookie('XSRF-TOKEN');
+
+      // 2. Send the login credentials
+      const response = await fetch('http://localhost:8000/login', {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          'X-XSRF-TOKEN': csrfToken,
+        },
+        credentials: 'include',
+        body: JSON.stringify({
+          email: email,
+          password: password,
+        })
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Invalid credentials provided.");
+      }
+
+      console.log("Logged in successfully!");
       navigate("/dashboard");
-    } else {
-      alert("Invalid credentials! Try: testuser / password");
+
+    } catch (error) {
+      setErrorMsg("Invalid email or password.");
     }
   };
 
@@ -32,16 +70,22 @@ export default function Login() {
           Log In
         </h2>
 
+        {errorMsg && (
+          <div className="bg-red-900/50 border border-red-500 text-red-200 text-xs p-2 rounded-sm mb-4">
+            {errorMsg}
+          </div>
+        )}
+
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
 
           <div>
-            <label className="block text-xs font-bold text-gray-400 mb-1">
-              Username
-            </label>
+            <label className="block text-xs font-bold text-gray-400 mb-1">Email Address</label>
             <input
+              type="email"
+              required
               className="w-full bg-[#121212] border border-[#333] text-white rounded-sm px-2 py-1.5 focus:outline-none focus:border-[#9c16c2] transition text-sm"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
             />
           </div>
 
