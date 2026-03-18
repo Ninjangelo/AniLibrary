@@ -18,6 +18,17 @@ export default function Register() {
     e.preventDefault();
     setErrorMsg("");
 
+    // ----- Register Validation -----
+    if (password.length < 8) {
+      setErrorMsg("Your password must be at least 8 characters long.");
+      return;
+    }
+
+    if (password !== passwordConfirmation) {
+      setErrorMsg("Your password does not match. Please try again.");
+      return;
+    }
+
     try {
       console.log("Checkpoint 1: Requesting cookie...");
       await fetch('http://localhost:8000/sanctum/csrf-cookie', {
@@ -28,7 +39,6 @@ export default function Register() {
 
       console.log("Checkpoint 2: Cookie requested. Grabbing token...");
       const csrfToken = getCookie('XSRF-TOKEN');
-      console.log("The token is:", csrfToken);
 
       console.log("Checkpoint 3: Sending registration data...");
       const response = await fetch('http://localhost:8000/register', {
@@ -36,6 +46,7 @@ export default function Register() {
         headers: {
           'Accept': 'application/json',
           'Content-Type': 'application/json',
+          'X-Requested-With': 'XMLHttpRequest',
           'X-XSRF-TOKEN': csrfToken, 
         },
         credentials: 'include',
@@ -49,18 +60,24 @@ export default function Register() {
 
       console.log("Checkpoint 4: Laravel responded! Status:", response.status);
 
-      if (!response.ok || response.status === 204) {
+      if (response.ok || response.status === 204) {
         console.log("Account created successfully!");
         navigate("/dashboard");
-        const errorData = await response.json();
-        throw new Error(errorData.message || "Registration failed. Please check your inputs.");
+        return;
       }
 
+      // Form rejected by Laravel
       const errorData = await response.json();
+      console.log("Laravel Error Payload:", errorData);
+
+      if (errorData.errors && errorData.errors.email) {
+        throw new Error("This email already has an account assigned to it.");
+      }
+
       throw new Error(errorData.message || "Registration failed. Please check inputs.");
 
     } catch (error) {
-      console.error("CRASH DETECTED:", error);
+      console.error("Error Caught:", error);
       setErrorMsg(error.message);
     }
   };
@@ -81,6 +98,12 @@ export default function Register() {
         <h2 className="text-white font-bold text-lg mb-4 border-b border-[#2a2a2a] pb-2">
           Sign Up
         </h2>
+
+        {errorMsg && (
+          <div className="bg-red-900/50 border border-red-500 text-red-200 text-xs p-2 rounded-sm mb-4">
+            {errorMsg}
+          </div>
+        )}
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
 

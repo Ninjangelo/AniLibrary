@@ -1,7 +1,39 @@
 import React from "react";
 import Navbar from "../components/Navbar";
+import  { useNavigate } from "react-router-dom";
+
+const getCookie = (name) => {
+  const match = document.cookie.match(new RegExp('(^|;\\s*)(' + name + ')=([^;]*)'));
+  return match ? decodeURIComponent(match[3]) : null;
+}
 
 export default function Profile() {
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    try {
+      const csrfToken = getCookie('XSRF-TOKEN');
+
+      const response = await fetch("http://localhost:8000/logout", {
+        method: "POST",
+        headers: {
+          "Accept": "application/json",
+          "Content-Type": "application/json",
+          "X-XSRF-TOKEN": csrfToken,
+        },
+        credentials: "include",
+      });
+
+      if (response.ok || response.status === 204) {
+        console.log("Logged out successfully");
+        navigate("/"); 
+      }
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
+  };
+
+
   return (
     <div className="min-h-screen bg-[#121212] pb-10">
       <Navbar />
@@ -14,6 +46,11 @@ export default function Profile() {
           <div className="flex gap-4 text-xs text-gray-400 font-normal">
             <span className="cursor-pointer hover:text-white">✎ About Me Design</span>
             <span className="cursor-pointer hover:text-white">⚙ Profile Settings</span>
+            <span
+              className="cursor-pointer hover:text-white"
+              onClick={handleLogout}
+            >
+              ⍈ Logout</span>
           </div>
         </div>
 

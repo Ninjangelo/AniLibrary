@@ -7,7 +7,7 @@ const getCookie = (name) => {
 };
 
 export default function Login() {
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
   const navigate = useNavigate();
@@ -17,20 +17,24 @@ export default function Login() {
     setErrorMsg("");
 
     try {
+      console.log("Checkpoint 1: Requesting cookie...");
       await fetch('http://localhost:8000/sanctum/csrf-cookie', {
         method: 'GET',
         headers: { 'Accept': 'application/json' },
         credentials: 'include',
       });
 
+      console.log("Checkpoint 2: Grabbing token...");
       const csrfToken = getCookie('XSRF-TOKEN');
 
       // 2. Send the login credentials
+      console.log("Checkpoint 3: Sending login credentials...");
       const response = await fetch('http://localhost:8000/login', {
         method: 'POST',
         headers: {
           'Accept': 'application/json',
           'Content-Type': 'application/json',
+          'X-Requested-With': 'XMLHttpRequest',
           'X-XSRF-TOKEN': csrfToken,
         },
         credentials: 'include',
@@ -40,16 +44,26 @@ export default function Login() {
         })
       });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || "Invalid credentials provided.");
+      console.log("Checkpoint 4: Laravel responded! Status:", response.status);
+
+      if (response.ok || response.status === 204) {
+        console.log("Logged in successfully!");
+        navigate("/dashboard");
+        return;
       }
 
-      console.log("Logged in successfully!");
-      navigate("/dashboard");
+      const errorData = await response.json();
+      console.log("Login Error Payload:", errorData);
+      
+      if (errorData.errors && errorData.errors.email) {
+         throw new Error("Invalid email or password. Please try again.");
+      }
+
+      throw new Error(errorData.message || "An error occurred during login.");
 
     } catch (error) {
-      setErrorMsg("Invalid email or password.");
+      console.error("Login Caught Error:", error);
+      setErrorMsg(error.message);
     }
   };
 
