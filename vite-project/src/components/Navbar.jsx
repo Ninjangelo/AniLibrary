@@ -2,6 +2,9 @@ import React from "react";
 import { Link } from "react-router-dom";
 
 export default function Navbar() {
+  const userName = localStorage.getItem('userName') || 'Guest ';
+  const userInitial = userName.charAt(0).toUpperCase();
+
   return (
     <header className="w-full shadow-md">
       
@@ -23,12 +26,12 @@ export default function Navbar() {
           className="flex items-center gap-3 text-white hover:opacity-80 transition"
         >
           <span className="text-sm font-medium">
-            TestUser
+            {userName}
           </span>
 
           {/* Avatar Placeholder */}
           <div className="w-8 h-8 rounded-full bg-[#9c16c2] flex items-center justify-center text-white font-bold text-sm">
-            T
+            {userInitial}
           </div>
         </Link>
       </div>

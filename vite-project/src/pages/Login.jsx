@@ -1,11 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 
-const getCookie = (name) => {
-  const match = document.cookie.match(new RegExp('(^|;\\s*)(' + name + ')=([^;]*)'));
-  return match ? decodeURIComponent(match[3]) : null;
-};
-
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -17,50 +12,21 @@ export default function Login() {
     setErrorMsg("");
 
     try {
-      console.log("Checkpoint 1: Requesting cookie...");
-      await fetch('http://localhost:8000/sanctum/csrf-cookie', {
-        method: 'GET',
-        headers: { 'Accept': 'application/json' },
-        credentials: 'include',
-      });
-
-      console.log("Checkpoint 2: Grabbing token...");
-      const csrfToken = getCookie('XSRF-TOKEN');
-
-      // 2. Send the login credentials
-      console.log("Checkpoint 3: Sending login credentials...");
-      const response = await fetch('http://localhost:8000/login', {
+      const response = await fetch('http://localhost/anilibrary/api/login.php', {
         method: 'POST',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-          'X-Requested-With': 'XMLHttpRequest',
-          'X-XSRF-TOKEN': csrfToken,
-        },
-        credentials: 'include',
-        body: JSON.stringify({
-          email: email,
-          password: password,
-        })
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: email, password: password }),
       });
 
-      console.log("Checkpoint 4: Laravel responded! Status:", response.status);
-
-      if (response.ok || response.status === 204) {
-        console.log("Logged in successfully!");
-        navigate("/dashboard");
-        return;
-      }
-
-      const errorData = await response.json();
-      console.log("Login Error Payload:", errorData);
+      const data = await response.json();
       
-      if (errorData.errors && errorData.errors.email) {
-         throw new Error("Invalid email or password. Please try again.");
+      if (data.status === 'success') {
+        // Save their name so the Dashboard can say hello!
+        localStorage.setItem('userName', data.user_name); 
+        navigate("/dashboard");
+      } else {
+        throw new Error(data.message);
       }
-
-      throw new Error(errorData.message || "An error occurred during login.");
-
     } catch (error) {
       console.error("Login Caught Error:", error);
       setErrorMsg(error.message);

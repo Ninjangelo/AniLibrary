@@ -1,11 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 
-const getCookie = (name) => {
-  const match = document.cookie.match(new RegExp('(^|;\\s*)(' + name + ')=([^;]*)'));
-  return match ? decodeURIComponent(match[3]) : null;
-}
-
 export default function Register() {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
@@ -30,52 +25,24 @@ export default function Register() {
     }
 
     try {
-      console.log("Checkpoint 1: Requesting cookie...");
-      await fetch('http://localhost:8000/sanctum/csrf-cookie', {
-        method: 'GET',
-        headers: { 'Accept': 'application/json' },
-        credentials: 'include', 
-      });
-
-      console.log("Checkpoint 2: Cookie requested. Grabbing token...");
-      const csrfToken = getCookie('XSRF-TOKEN');
-
-      console.log("Checkpoint 3: Sending registration data...");
-      const response = await fetch('http://localhost:8000/register', {
+      const response = await fetch('http://localhost/anilibrary/api/register.php', {
         method: 'POST',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-          'X-Requested-With': 'XMLHttpRequest',
-          'X-XSRF-TOKEN': csrfToken, 
-        },
-        credentials: 'include',
-        body: JSON.stringify({
-          name: username,
-          email: email,
-          password: password,
-          password_confirmation: passwordConfirmation
-        })
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+            name: username, 
+            email: email, 
+            password: password
+        }),
       });
 
-      console.log("Checkpoint 4: Laravel responded! Status:", response.status);
-
-      if (response.ok || response.status === 204) {
-        console.log("Account created successfully!");
+      const data = await response.json();
+      
+      if (data.status === 'success') {
+        localStorage.setItem('userName', username);
         navigate("/dashboard");
-        return;
+      } else {
+        throw new Error(data.message);
       }
-
-      // Form rejected by Laravel
-      const errorData = await response.json();
-      console.log("Laravel Error Payload:", errorData);
-
-      if (errorData.errors && errorData.errors.email) {
-        throw new Error("This email already has an account assigned to it.");
-      }
-
-      throw new Error(errorData.message || "Registration failed. Please check inputs.");
-
     } catch (error) {
       console.error("Error Caught:", error);
       setErrorMsg(error.message);
