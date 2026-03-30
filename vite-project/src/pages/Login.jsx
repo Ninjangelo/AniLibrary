@@ -15,14 +15,13 @@ export default function Login() {
       const response = await fetch('http://localhost/anilibrary/api/login.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({ email: email, password: password }),
       });
 
       const data = await response.json();
       
       if (data.status === 'success') {
-        // Save their name so the Dashboard can say hello!
-        localStorage.setItem('userName', data.user_name); 
         navigate("/dashboard");
       } else {
         throw new Error(data.message);

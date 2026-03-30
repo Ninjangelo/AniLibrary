@@ -1,15 +1,54 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Navbar from "../components/Navbar";
 import  { useNavigate } from "react-router-dom";
 
 export default function Profile() {
   const navigate = useNavigate();
-  const userName = localStorage.getItem('userName');
+
+  const [userName, setUserName] = useState("Loading...");
+
+  useEffect(() => {
+    const fetchUserSession = async () => {
+      try {
+        const response = await fetch('http://localhost/anilibrary/api/check_session.php', {
+          method: 'GET',
+          credentials: 'include'
+        });
+        const data = await response.json();
+        
+        if (data.status === 'success') {
+          setUserName(data.user_name);
+        } else {
+          // Forces them back to Login.jsx
+          navigate('/');
+        }
+      } catch (error) {
+        console.error("Failed to check session:", error);
+      }
+    };
+
+    fetchUserSession();
+  }, [navigate]);
 
   const handleLogout = async () => {
-    localStorage.removeItem('userName');
+    try {
+      // Tells PHP to destroy the session
+      const response = await fetch('http://localhost/anilibrary/api/logout.php', {
+        method: 'POST',
+        credentials: 'include'
+      });
 
-    navigate('/');
+      const data = await response.json();
+
+      if (data.status === 'success') {
+        // Send user back to the Login page
+        navigate('/');
+      } else {
+        console.error("Logout error:", data.message);
+      }
+    } catch (error) {
+      console.error("Failed to connect to logout server:", error);
+    }
   };
 
 
