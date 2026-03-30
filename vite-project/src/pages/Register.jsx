@@ -33,12 +33,12 @@ export default function Register() {
             email: email, 
             password: password
         }),
+        credentials: 'include',
       });
 
       const data = await response.json();
       
       if (data.status === 'success') {
-        localStorage.setItem('userName', username);
         navigate("/dashboard");
       } else {
         throw new Error(data.message);

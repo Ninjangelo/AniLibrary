@@ -1,8 +1,35 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
 export default function Navbar() {
-  const userName = localStorage.getItem('userName') || 'Guest ';
+  // Default state is "Guest"
+  const [userName, setUserName] = useState("Guest");
+
+  // Asks PHP who is logged in
+  useEffect(() => {
+    const fetchUserSession = async () => {
+      try {
+        const response = await fetch('http://localhost/anilibrary/api/check_session.php', {
+          method: 'GET',
+          // Ensures cookies are sent to PHP
+          credentials: 'include' 
+        });
+
+        const data = await response.json();
+        
+        if (data.status === 'success') {
+          // Navbar updated if PHP recognises user
+          setUserName(data.user_name);
+        }
+      } catch (error) {
+        console.error("Failed to check session:", error)
+      }
+    };
+
+    fetchUserSession();
+
+  }, []);
+
   const userInitial = userName.charAt(0).toUpperCase();
 
   return (
