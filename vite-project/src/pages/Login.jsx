@@ -38,7 +38,7 @@ export default function Login() {
       {/* Logo */}
       <h1
         className="text-white text-4xl font-bold mb-8 tracking-tight"
-        style={{ fontFamily: "Montserrat, sans-serif" }}
+        style={{ fontFamily: "Montserrat, sans-serif", fontWeight: 800 }}
       >
         AniLibrary
       </h1>
