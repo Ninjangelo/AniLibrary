@@ -2,6 +2,8 @@ import React from "react";
 import { Link } from "react-router-dom";
 
 export default function AnimeCard({ anime, addToMyList }) {
+
+  
   return (
     <div className="bg-white rounded-xl shadow hover:shadow-lg transition p-4 flex flex-col justify-between">
       <div>
