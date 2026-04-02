@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
+import { AuthContext } from "../context/AuthContext";
 
 export default function Register() {
   const [username, setUsername] = useState("");
@@ -8,6 +9,8 @@ export default function Register() {
   const [passwordConfirmation, setPasswordConfirmation] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
   const navigate = useNavigate();
+
+  const { setUserName } = useContext(AuthContext);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -39,6 +42,7 @@ export default function Register() {
       const data = await response.json();
       
       if (data.status === 'success') {
+        setUserName(username);
         navigate("/dashboard");
       } else {
         throw new Error(data.message);

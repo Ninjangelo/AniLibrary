@@ -1,34 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import Navbar from "../components/Navbar";
-import  { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../context/AuthContext";
 
 export default function Profile() {
   const navigate = useNavigate();
 
-  const [userName, setUserName] = useState("Loading...");
-
-  useEffect(() => {
-    const fetchUserSession = async () => {
-      try {
-        const response = await fetch('http://localhost/anilibrary/api/check_session.php', {
-          method: 'GET',
-          credentials: 'include'
-        });
-        const data = await response.json();
-        
-        if (data.status === 'success') {
-          setUserName(data.user_name);
-        } else {
-          // Forces them back to Login.jsx
-          navigate('/');
-        }
-      } catch (error) {
-        console.error("Failed to check session:", error);
-      }
-    };
-
-    fetchUserSession();
-  }, [navigate]);
+  const { userName, setUserName } = useContext(AuthContext);
 
   const handleLogout = async () => {
     try {
@@ -41,6 +19,8 @@ export default function Profile() {
       const data = await response.json();
 
       if (data.status === 'success') {
+        // Clearing React global memory
+        setUserName(null);
         // Send user back to the Login page
         navigate('/');
       } else {

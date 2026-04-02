@@ -1,36 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext } from "react";
 import { Link } from "react-router-dom";
+import { AuthContext } from "../context/AuthContext";
 
 export default function Navbar() {
   // Default state is "Guest"
-  const [userName, setUserName] = useState("Guest");
+  const { userName } = useContext(AuthContext);
 
-  // Asks PHP who is logged in
-  useEffect(() => {
-    const fetchUserSession = async () => {
-      try {
-        const response = await fetch('http://localhost/anilibrary/api/check_session.php', {
-          method: 'GET',
-          // Ensures cookies are sent to PHP
-          credentials: 'include' 
-        });
-
-        const data = await response.json();
-        
-        if (data.status === 'success') {
-          // Navbar updated if PHP recognises user
-          setUserName(data.user_name);
-        }
-      } catch (error) {
-        console.error("Failed to check session:", error)
-      }
-    };
-
-    fetchUserSession();
-
-  }, []);
-
-  const userInitial = userName.charAt(0).toUpperCase();
+  const displayUserName = userName || "Loading...";
+  const userInitial = displayUserName.charAt(0).toUpperCase();
 
   return (
     <header className="w-full shadow-md">
@@ -53,7 +30,7 @@ export default function Navbar() {
           className="flex items-center gap-3 text-white hover:opacity-80 transition"
         >
           <span className="text-sm font-medium">
-            {userName}
+            {displayUserName}
           </span>
 
           {/* Avatar Placeholder */}
