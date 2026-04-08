@@ -1,16 +1,65 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import Navbar from "../components/Navbar";
-import { animeList } from "../data/animeData";
 
 export default function AnimeDetails({ addToMyList }) {
+  // Get ID from URL
   const { id } = useParams();
-  const anime = animeList.find((a) => a.id === parseInt(id));
 
-  if (!anime) {
+  // Cleans anime name from URLs (e.g. Death%20Note becomes Death Note)  
+  const animeName = decodeURIComponent(id);
+
+  // State Variables
+  const [anime, setAnime] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [animeRank, setAnimeRank] = useState("--");
+
+  useEffect(() => {
+    const fetchAnimeDetails = async () => {
+      try {
+        const response = await fetch('http://localhost/anilibrary/api/get_anime.php', {
+          method: 'GET',
+          credentials: 'include'
+        });
+        
+        const data = await response.json();
+        
+        if (data.status === 'success') {
+          // Find anime in sorted array
+          const animeIndex = data.data.findIndex((a) => a.name === animeName);
+          
+          if (animeIndex !== -1) {
+            setAnime(data.data[animeIndex]); // Save the anime data
+            setAnimeRank(animeIndex + 1);    // Save the rank! (Index starts at 0, so we add 1)
+          }
+        } else {
+          console.error("Failed to load anime details");
+        }
+      } catch (error) {
+        console.error("Error fetching anime data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAnimeDetails();
+  }, [animeName]);
+
+  // Handle Loading State
+  if (loading) {
     return (
       <div className="min-h-screen bg-[#121212] text-white flex items-center justify-center">
-        Anime not found
+        Loading anime details...
+      </div>
+    );
+  }
+
+  // Handle Not Found State
+  if (!anime) {
+    return (
+      <div className="min-h-screen bg-[#121212] text-white flex flex-col items-center justify-center">
+        <h2 className="text-2xl font-bold mb-2">Anime Not Found</h2>
+        <p className="text-gray-400">We couldn't find "{animeName}" in the database.</p>
       </div>
     );
   }
@@ -27,7 +76,7 @@ export default function AnimeDetails({ addToMyList }) {
             className="text-3xl text-white"
             style={{ fontFamily: "Montserrat, sans-serif", fontWeight: 800 }}
           >
-            {anime.title}
+            {anime.name}
           </h1>
         </div>
 
@@ -36,11 +85,17 @@ export default function AnimeDetails({ addToMyList }) {
           {/* Left Column */}
           <div className="w-full md:w-[260px]">
 
-            <div className="bg-[#1e1e1e] border border-[#2a2a2a] rounded-md p-4">
-              
-              {/* Image Placeholder */}
-              <div className="w-full h-[320px] bg-[#2a2a2a] flex items-center justify-center text-gray-500 mb-4">
-                IMG
+            <div className="bg-[#1e1e1e] border border-[#2a2a2a] rounded-md p-4">              
+              <div className="w-full h-[320px] bg-[#2a2a2a] flex items-center justify-center text-gray-500 mb-4 overflow-hidden">
+                <img
+                  src={
+                    anime.image_filename 
+                      ? `http://localhost/anilibrary/images/${anime.image_filename}` 
+                      : `https://placehold.co/260x320/1e1e1e/FFFFFF/png?text=${anime.name ? String(anime.name).charAt(0) : '?'}`
+                  }
+                  alt={anime.name || "Unknown Anime"}
+                  className="w-full h-full object-cover"
+                />
               </div>
 
               {/* Add Button */}
@@ -63,15 +118,15 @@ export default function AnimeDetails({ addToMyList }) {
                   </li>
                   <li>
                     <span className="text-white font-semibold">Episodes:</span>{" "}
-                    {anime.episodes}
+                    {anime.eps || "?"}
                   </li>
                   <li>
                     <span className="text-white font-semibold">Status:</span>{" "}
-                    Finished Airing
+                    {anime.status}
                   </li>
                   <li>
                     <span className="text-white font-semibold">Genres:</span>{" "}
-                    {anime.genre}
+                    {anime.tags}
                   </li>
                 </ul>
               </div>
@@ -91,23 +146,23 @@ export default function AnimeDetails({ addToMyList }) {
                   <p className="text-xs uppercase text-gray-400 mb-1">
                     Score
                   </p>
-                  <p className="text-3xl font-bold text-white">8.50</p>
+                  <p className="text-3xl font-bold text-white">{anime.rating || "N/A"}</p>
                   <p className="text-xs text-gray-500">
-                    123,456 users
+                    {anime.rated_by}
                   </p>
                 </div>
 
                 <div className="flex gap-8 text-sm text-gray-400">
                   <div>
-                    Ranked <span className="text-white font-semibold">#15</span>
+                    Ranked <span className="text-white font-semibold">{"#" + animeRank}</span>
                   </div>
                   <div>
-                    Popularity <span className="text-white font-semibold">#5</span>
+                    Popularity <span className="text-white font-semibold">N/A</span>
                   </div>
                   <div>
                     Members{" "}
                     <span className="text-white font-semibold">
-                      1,500,000
+                      N/A
                     </span>
                   </div>
                 </div>
@@ -122,7 +177,7 @@ export default function AnimeDetails({ addToMyList }) {
               </h2>
 
               <p className="text-gray-300 leading-relaxed text-sm">
-                {anime.description}
+                {anime.synopsis}
               </p>
             </div>
 
