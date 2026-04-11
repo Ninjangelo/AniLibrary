@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Navbar from "../components/Navbar";
 
-export default function Library({ addToMyList }) {
+export default function Library({ addToMyList, myAnimeList = [] }) {
   // State Variables
   const [animeList, setAnimeList] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -36,6 +36,7 @@ export default function Library({ addToMyList }) {
   // Empty array ensures this only runs once
   
   console.log("Database Data:", animeList);
+
   return (
     <div className="min-h-screen bg-[#121212] pb-10">
       <Navbar />
@@ -96,65 +97,69 @@ export default function Library({ addToMyList }) {
                 </td>
               </tr>
             ) : (
-              animeList.map((anime, index) => (
-                <tr
-                  key={anime.id || index}
-                  className="hover:bg-[#252525] border-b border-[#2a2a2a]"
-                >
-                  <td className="text-3xl font-bold text-gray-400 text-center py-4">
-                    {index + 1}
-                  </td>
+              animeList.map((anime, index) => {
+                // Calculate isSaved inside the loop for each specific anime
+                const isSaved = myAnimeList.includes(anime.id);
 
-                  <td className="py-2 px-2 flex gap-3 items-start">
-                    <img
-                      // SAFETY NET: If the database has a filename, look in the XAMPP folder. 
-                      // If the database has NO filename (null), fallback to the placeholder!
-                      src={
-                        anime.image_filename 
-                          ? `http://localhost/anilibrary/images/${anime.image_filename}` 
-                          : `https://placehold.co/260x320/1e1e1e/FFFFFF/png?text=${anime.name ? String(anime.name).charAt(0) : '?'}`
-                      }
-                      alt={anime.name || "Unknown Anime"}
-                      className="w-24 h-[125px] object-cover"
-                    />
+                return (
+                  <tr
+                    key={anime.id || index}
+                    className="hover:bg-[#252525] border-b border-[#2a2a2a]"
+                  >
+                    <td className="text-3xl font-bold text-gray-400 text-center py-4">
+                      {index + 1}
+                    </td>
 
-                    <div>
-                      <a
-                        href={`/anime/${anime.name || ''}`}
-                        className="text-white font-bold text-sm hover:underline"
+                    <td className="py-2 px-2 flex gap-3 items-start">
+                      <img
+                        src={
+                          anime.image_filename 
+                            ? `http://localhost/anilibrary/images/${anime.image_filename}` 
+                            : `https://placehold.co/260x320/1e1e1e/FFFFFF/png?text=${anime.name ? String(anime.name).charAt(0) : '?'}`
+                        }
+                        alt={anime.name || "Unknown Anime"}
+                        className="w-24 h-[125px] object-cover"
+                      />
+
+                      <div>
+                        <a
+                          href={`/anime/${anime.name || ''}`}
+                          className="text-white font-bold text-sm hover:underline"
+                        >
+                          {anime.name || "Unknown Anime"}
+                        </a>
+                        <p className="text-gray-400 text-[11px] mt-1">
+                          TV ({anime.eps || '?'} eps)
+                        </p>
+                        <p className="text-gray-400 text-[11px]">
+                          {anime.tags || "Unknown Genre"}
+                        </p>
+                      </div>
+                    </td>
+
+                    <td className="text-center font-bold text-white text-sm">
+                      ★ {anime.rating || "N/A"}
+                    </td>
+
+                    <td className="text-center text-xs text-gray-400">
+                      N/A
+                    </td>
+
+                    <td className="text-center">
+                      <button
+                        onClick={() => addToMyList(anime)}
+                        className={`text-xs px-3 py-1 rounded transition ${
+                          isSaved 
+                            ? "bg-gray-600 hover:bg-gray-700 text-white" 
+                            : "bg-[#9c16c2] hover:bg-[#7c11a0] text-white"
+                        }`}
                       >
-                        {/* SAFETY NET: Fallback text if title is missing */}
-                        {anime.name || "Unknown Anime"}
-                      </a>
-
-                      <p className="text-gray-400 text-[11px] mt-1">
-                        TV ({anime.eps || '?'} eps)
-                      </p>
-
-                      <p className="text-gray-400 text-[11px]">
-                        {anime.tags || "Unknown Genre"}
-                      </p>
-                    </div>
-                  </td>
-
-                  <td className="text-center font-bold text-white text-sm">
-                    ★ {anime.rating || "N/A"}
-                  </td>
-
-                  <td className="text-center text-xs text-gray-400">
-                    N/A
-                  </td>
-
-                  <td className="text-center">
-                    <button
-                      onClick={() => addToMyList(anime)}
-                      className="bg-[#9c16c2] hover:bg-[#7c11a0] text-white text-xs px-3 py-1 rounded transition"
-                    >
-                      Add to list
-                    </button>
-                  </td>
-                </tr>
-              ))
+                        {isSaved ? "✓ Added" : "Add to list"}
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })
             )}
           </tbody>
         </table>

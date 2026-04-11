@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import Navbar from "../components/Navbar";
 
-export default function AnimeDetails({ addToMyList }) {
+export default function AnimeDetails({ addToMyList, myAnimeList = [] }) {
   // Get ID from URL
   const { id } = useParams();
 
@@ -64,6 +64,8 @@ export default function AnimeDetails({ addToMyList }) {
     );
   }
 
+  const isSaved = anime ? myAnimeList.includes(anime.id) : false;
+
   return (
     <div className="min-h-screen bg-[#121212] pb-12">
       <Navbar />
@@ -101,9 +103,13 @@ export default function AnimeDetails({ addToMyList }) {
               {/* Add Button */}
               <button
                 onClick={() => addToMyList(anime)}
-                className="w-full bg-[#9c16c2] hover:bg-[#7c11a0] text-white py-2 rounded-md font-semibold transition"
+                className={`w-full py-2 rounded-md font-semibold transition ${
+                  isSaved 
+                    ? "bg-gray-600 hover:bg-gray-700 text-white" 
+                    : "bg-[#9c16c2] hover:bg-[#7c11a0] text-white"
+                }`}
               >
-                Add to My List
+                {isSaved ? "✓ In Your List" : "Add to My List"}
               </button>
 
               {/* Info */}

@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useContext } from "react";
 import Navbar from "../components/Navbar";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 
 export default function Profile() {
   const navigate = useNavigate();
 
-  const { userName, setUserName } = useContext(AuthContext);
+  const { userName, setUserName, userAvatar, userBio } = useContext(AuthContext);
 
   const handleLogout = async () => {
     try {
@@ -42,7 +42,13 @@ export default function Profile() {
         <div className="bg-[#1e1e1e] border-t-2 border-[#9c16c2] p-2 flex justify-between items-center mb-4 text-white font-bold">
           <span>{userName} Profile</span>
           <div className="flex gap-4 text-xs text-gray-400 font-normal">
-            <span className="cursor-pointer hover:text-white">✎ Edit Profile</span>
+            <Link
+              to="/edit-profile"
+              className="cursor-pointer
+            hover:text-white"
+            >
+              ✎ Edit Profile
+            </Link>
             <span
               className="cursor-pointer hover:text-white"
               onClick={handleLogout}
@@ -58,7 +64,11 @@ export default function Profile() {
 
             {/* Avatar Placeholder (purple instead of blue gradient) */}
             <div className="w-full h-56 bg-[#1e1e1e] border border-[#2a2a2a] flex items-center justify-center mb-2 text-gray-500">
-              Avatar
+              {userAvatar ? (
+                <img src={userAvatar} alt="Profile" className="w-full h-full object-cover" />
+              ) : (
+                "Avatar"
+              )}
             </div>
 
             <table className="w-full text-xs text-gray-300 mb-4 border-b border-[#2a2a2a] pb-2">
@@ -98,7 +108,7 @@ export default function Profile() {
           <div className="flex-grow flex flex-col gap-6">
 
             <p className="text-xs text-gray-400">
-              The shape of your voice
+              {userBio || "No description provided."}
             </p>
 
             <div>

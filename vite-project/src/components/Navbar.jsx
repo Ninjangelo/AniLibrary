@@ -4,7 +4,7 @@ import { AuthContext } from "../context/AuthContext";
 
 export default function Navbar() {
   // Default state is "Guest"
-  const { userName } = useContext(AuthContext);
+  const { userName, userAvatar } = useContext(AuthContext);
 
   const displayUserName = userName || "Loading...";
   const userInitial = displayUserName.charAt(0).toUpperCase();
@@ -35,7 +35,11 @@ export default function Navbar() {
 
           {/* Avatar Placeholder */}
           <div className="w-8 h-8 rounded-full bg-[#9c16c2] flex items-center justify-center text-white font-bold text-sm">
-            {userInitial}
+            {userAvatar ? (
+              <img src={userAvatar} alt="Profile" className="w-full h-full object-cover" />
+            ) : (
+              userInitial
+            )}
           </div>
         </Link>
       </div>

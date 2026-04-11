@@ -4,6 +4,8 @@ export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [userName, setUserName] = useState(null);
+  const [userAvatar, setUserAvatar] = useState(null);
+  const [userBio, setUserBio] = useState("The shape of your voice");
   // Facilitates UI
   const [loading, setLoading] = useState(true);
 
@@ -35,7 +37,7 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ userName, setUserName, loading }}>
+    <AuthContext.Provider value={{ userName, setUserName, loading, userAvatar, setUserAvatar, userBio, setUserBio }}>
       {children}
     </AuthContext.Provider>
   );
