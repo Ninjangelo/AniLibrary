@@ -89,9 +89,9 @@ export default function Profile() {
             </table>
 
             <div className="flex gap-2 mb-4">
-              <button className="flex-1 bg-[#9c16c2] text-white py-1 rounded text-xs font-bold hover:bg-[#7c11a0] transition">
+              <Link to="/mylist" className="flex-1 bg-[#9c16c2] text-white py-1 text-center rounded text-xs font-bold hover:bg-[#7c11a0] transition">
                 Anime List
-              </button>
+              </Link>
               <button className="flex-1 bg-[#9c16c2] text-white py-1 rounded text-xs font-bold hover:bg-[#7c11a0] transition">
                 Manga List
               </button>

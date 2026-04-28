@@ -8,7 +8,7 @@ export default function Login() {
   const [errorMsg, setErrorMsg] = useState("");
   const navigate = useNavigate();
 
-  const { setUserName } = useContext(AuthContext);
+  const { setUserName, setUserAvatar, setUserBio, setUserEmail } = useContext(AuthContext);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -26,6 +26,10 @@ export default function Login() {
       
       if (data.status === 'success') {
         setUserName(data.user_name);
+        setUserAvatar(data.avatar_url);
+        setUserBio(data.bio);
+        setUserEmail(data.email);
+
         navigate("/dashboard");
       } else {
         throw new Error(data.message);

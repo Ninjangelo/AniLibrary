@@ -4,12 +4,17 @@ import Navbar from "../components/Navbar";
 import { AuthContext } from "../context/AuthContext";
 
 export default function EditProfile() {
-  const { userName, setUserName, userAvatar, setUserAvatar, userBio, setUserBio } = useContext(AuthContext);
+  const {
+    userName, setUserName,
+    userAvatar, setUserAvatar,
+    userBio, setUserBio,
+    userEmail, setUserEmail
+  } = useContext(AuthContext);
   
   // Form State
   const [usernameInput, setUsernameInput] = useState(userName || "");
   // blank on default
-  const [emailInput, setEmailInput] = useState("");
+  const [emailInput, setEmailInput] = useState(userEmail || "");
   const [bioInput, setBioInput] = useState(userBio || "");
   
   // Image State
@@ -69,6 +74,7 @@ export default function EditProfile() {
         
         // updates react global memory for instant update of profile aspects
         if (data.new_username) setUserName(data.new_username);
+        if (data.new_email) setUserEmail(data.new_email);
         if (data.avatar_url) setUserAvatar(data.avatar_url);
         if (data.new_bio !== undefined) setUserBio(data.new_bio);
         
