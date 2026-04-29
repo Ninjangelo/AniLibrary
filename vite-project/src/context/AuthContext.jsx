@@ -13,7 +13,8 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const checkSession = async () => {
       try {
-        const response = await fetch('http://localhost/anilibrary/api/check_session.php', {
+        // Changed to relative cloud path!
+        const response = await fetch('/api/check_session.php', {
           method: 'GET',
           credentials: 'include'
         });
@@ -36,6 +37,15 @@ export const AuthProvider = ({ children }) => {
 
     checkSession();
   }, []);
+
+  // THE BLOCKADE: Do not render the app until the server responds
+  if (loading) {
+    return (
+      <div style={{ display: 'flex', justifyContent: 'center', marginTop: '20vh' }}>
+        <h2>Loading your library...</h2>
+      </div>
+    );
+  }
 
   return (
     <AuthContext.Provider value={{ userName, setUserName, loading, userAvatar, setUserAvatar, userBio, setUserBio, userEmail, setUserEmail }}>
