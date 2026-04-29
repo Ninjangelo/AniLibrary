@@ -15,7 +15,7 @@ export default function Login() {
     setErrorMsg("");
 
     try {
-      const response = await fetch('http://localhost/anilibrary/api/login.php', {
+      const response = await fetch('/api/login.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
