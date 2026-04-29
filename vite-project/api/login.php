@@ -9,7 +9,7 @@ if (isset($data->email) && isset($data->password)) {
     $email = $conn->real_escape_string($data->email);
     
     // Database search for stated Email
-    $stmt = $conn->prepare("SELECT id, password FROM users WHERE email = ?");
+    $stmt = $conn->prepare("SELECT id, name, password, avatar_filename, bio FROM users WHERE email = ?");
     $stmt->bind_param("s", $email);
     $stmt->execute();
     $result = $stmt->get_result();
@@ -20,7 +20,23 @@ if (isset($data->email) && isset($data->password)) {
         
         // Verify the hashed password field
         if (password_verify($data->password, $user['password'])) {
-            echo json_encode(["status" => "success", "message" => "Login successful!"]);
+
+            $_SESSION['user_id'] = $user['id'];
+            $_SESSION['user_name'] = $user['name'];
+
+            $avatar_url = null;
+            if (!empty($user['avatar_filename'])) {
+                $avatar_url = "/images/avatars/" . $user['avatar_filename'];
+            }
+
+            echo json_encode([
+                "status" => "success",
+                "message" => "Login successful!",
+                "user_name" => $user['name'],
+                "email" => $email,
+                "avatar_url" => $avatar_url,
+                "bio" => $user['bio']
+            ]);
         } else {
             echo json_encode(["status" => "error", "message" => "Incorrect password."]);
         }
