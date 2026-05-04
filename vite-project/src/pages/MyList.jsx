@@ -10,7 +10,7 @@ export default function MyList() {
   useEffect(() => {
     const fetchMyList = async () => {
       try {
-        const response = await fetch('http://localhost/anilibrary/api/get_my_list.php', {
+        const response = await fetch('/api/get_anime.php', {
           method: 'GET',
           credentials: 'include' // passes login cookie
         });

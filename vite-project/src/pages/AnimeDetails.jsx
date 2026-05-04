@@ -17,7 +17,7 @@ export default function AnimeDetails({ addToMyList, myAnimeList = [] }) {
   useEffect(() => {
     const fetchAnimeDetails = async () => {
       try {
-        const response = await fetch('http://localhost/anilibrary/api/get_anime.php', {
+        const response = await fetch('/api/get_anime.php', {
           method: 'GET',
           credentials: 'include'
         });

@@ -20,7 +20,7 @@ function App() {
   useEffect(() => {
     const loadSavedIds = async () => {
       try {
-        const res = await fetch('http://localhost/anilibrary/api/get_my_list.php', { credentials: 'include' });
+        const res = await fetch('/api/get_anime.php', { credentials: 'include' });
         const data = await res.json();
         if (data.status === 'success') {
           // Extract only the IDs into our state array
