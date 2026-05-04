@@ -92,7 +92,7 @@ export default function AnimeDetails({ addToMyList, myAnimeList = [] }) {
                 <img
                   src={
                     anime.image_filename 
-                      ? `http://localhost/anilibrary/images/${anime.image_filename}` 
+                      ? `https://group10-anilibrary-assets.s3.amazonaws.com/images/${anime.image_filename}` 
                       : `https://placehold.co/260x320/1e1e1e/FFFFFF/png?text=${anime.name ? String(anime.name).charAt(0) : '?'}`
                   }
                   alt={anime.name || "Unknown Anime"}

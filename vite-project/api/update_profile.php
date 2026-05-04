@@ -1,5 +1,9 @@
 <?php
 require 'db.php';
+require 'vendor/autoload.php'; // Required for AWS SDK
+
+use Aws\S3\S3Client;
+use Aws\Exception\AwsException;
 
 if (!isset($_SESSION['user_id'])) {
     echo json_encode(["status" => "error", "message" => "Not logged in."]);
@@ -15,36 +19,45 @@ $new_bio = isset($_POST['bio']) ? trim($_POST['bio']) : null;
 
 $avatar_url = null;
 
+// --- S3 Configuration ---
+$bucketName = 'group10-anilibrary-assets'; // Confirm this matches your bucket
+$region = 'us-east-1'; 
+
+// Initialize S3 Client
+$s3 = new S3Client([
+    'version' => 'latest',
+    'region'  => $region
+]);
+// ------------------------
+
 // handle file upload if image has been selected
 if (isset($_FILES['avatar']) && $_FILES['avatar']['error'] === UPLOAD_ERR_OK) {
     $fileTmpPath = $_FILES['avatar']['tmp_name'];
     $newFileName = "user_" . $user_id . "_" . time() . ".jpg";
-    $dest_path = "../images/avatars/" . $newFileName;
+    $keyName = 'images/avatars/' . $newFileName; // The path inside your S3 bucket
 
-    if(move_uploaded_file($fileTmpPath, $dest_path)) {
-        
-        $check = $conn->prepare("SELECT avatar_filename FROM users WHERE id = ?");
-        $check->bind_param("i", $user_id);
-        $check->execute();
-        $result = $check->get_result();
-        
-        if ($row = $result->fetch_assoc()) {
-            $old_avatar = $row['avatar_filename'];
-            // deletes file if it exists on the server
-            if ($old_avatar && file_exists("../images/avatars/" . $old_avatar)) {
-                unlink("../images/avatars/" . $old_avatar); // unlink() deletes files in PHP
-            }
-        }
-        $check->close();
-        // ----------------------------------------------
+    try {
+        // Upload data directly to S3 (No local saving!)
+        $result = $s3->putObject([
+            'Bucket' => $bucketName,
+            'Key'    => $keyName,
+            'SourceFile' => $fileTmpPath,
+            'ACL'    => 'public-read' // Important: Makes the image viewable
+        ]);
 
-        $avatar_url = "/images/avatars/" . $newFileName;
+        // Get the S3 URL to send back to React
+        $avatar_url = $result->get('ObjectURL');
         
         // update db with new image filename
         $stmt = $conn->prepare("UPDATE users SET avatar_filename = ? WHERE id = ?");
-        $stmt->bind_param("si", $newFileName, $user_id);
+        $stmt->bind_param("si", $avatar_url, $user_id); // Save the full URL to DB
         $stmt->execute();
         $stmt->close();
+
+    } catch (AwsException $e) {
+        // Catch any AWS SDK errors
+        echo json_encode(["status" => "error", "message" => "S3 Upload Failed: " . $e->getAwsErrorMessage()]);
+        exit();
     }
 }
 
