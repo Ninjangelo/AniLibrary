@@ -60,7 +60,7 @@ export default function EditProfile() {
     }
 
     try {
-      const response = await fetch('http://localhost/anilibrary/api/update_profile.php', {
+      const response = await fetch('/api/update_profile.php', {
         method: 'POST',
         credentials: 'include',
         // enables sending mixed package to PHP
